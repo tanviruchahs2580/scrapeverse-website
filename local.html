@@ -147,9 +147,9 @@
                                 ইমেইল সাপোর্ট
                             </li>
                         </ul>
-                        <a href="#" class="mt-8 block rounded-xl border border-gray-600 bg-gray-800/80 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:border-gray-500 hover:bg-gray-700">
+                        <button type="button" data-package="বেসিক" class="pricing-cta mt-8 block w-full cursor-pointer rounded-xl border border-gray-600 bg-gray-800/80 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:border-gray-500 hover:bg-gray-700">
                             শুরু করুন
-                        </a>
+                        </button>
                     </article>
 
                     <!-- Standard (Popular) -->
@@ -191,9 +191,9 @@
                                 ফ্রি স্যাম্পল ডেলিভারি
                             </li>
                         </ul>
-                        <a href="#" class="mt-8 block rounded-xl bg-emerald-500 py-3 text-center text-sm font-semibold text-gray-950 shadow-lg shadow-emerald-500/30 transition duration-300 hover:bg-emerald-400 hover:shadow-emerald-500/40">
+                        <button type="button" data-package="স্ট্যান্ডার্ড" class="pricing-cta mt-8 block w-full cursor-pointer rounded-xl bg-emerald-500 py-3 text-center text-sm font-semibold text-gray-950 shadow-lg shadow-emerald-500/30 transition duration-300 hover:bg-emerald-400 hover:shadow-emerald-500/40">
                             শুরু করুন
-                        </a>
+                        </button>
                     </article>
 
                     <!-- Enterprise -->
@@ -230,9 +230,9 @@
                                 SLA ও কমপ্লায়েন্স রিভিউ
                             </li>
                         </ul>
-                        <a href="#" class="mt-8 block rounded-xl border border-gray-600 bg-gray-800/80 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:border-emerald-500/40 hover:bg-gray-700 hover:text-emerald-300">
+                        <button type="button" data-package="এন্টারপ্রাইজ" class="pricing-cta mt-8 block w-full cursor-pointer rounded-xl border border-gray-600 bg-gray-800/80 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:border-emerald-500/40 hover:bg-gray-700 hover:text-emerald-300">
                             শুরু করুন
-                        </a>
+                        </button>
                     </article>
 
                 </div>
@@ -278,6 +278,51 @@
 
     </main>
 
+    <!-- Pricing request modal -->
+    <div id="pricing-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4" aria-hidden="true">
+        <div id="pricing-modal-backdrop" class="absolute inset-0 bg-gray-950/80 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-lg overflow-hidden rounded-2xl border border-gray-700 bg-gray-800 shadow-2xl shadow-emerald-500/10 ring-1 ring-gray-700" role="dialog" aria-modal="true" aria-labelledby="pricing-modal-title">
+            <button type="button" id="pricing-modal-close" class="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-gray-600 bg-gray-900/80 text-gray-400 transition hover:border-gray-500 hover:bg-gray-900 hover:text-white" aria-label="বন্ধ করুন">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="border-b border-gray-700 bg-gradient-to-r from-emerald-500/10 to-transparent px-6 pb-4 pt-6 pr-14">
+                <p class="text-xs font-semibold uppercase tracking-widest text-emerald-400">প্যাকেজ অনুরোধ</p>
+                <h2 id="pricing-modal-title" class="mt-1 text-xl font-bold text-white">শুরু করুন</h2>
+            </div>
+            <div class="p-6">
+                <form id="pricing-modal-form" name="package-request-bd" method="POST" data-netlify="true" class="space-y-4">
+                    <input type="hidden" name="form-name" value="package-request-bd">
+                    <div>
+                        <label for="pkg-name" class="mb-1.5 block text-sm font-medium text-gray-300">আপনার পূর্ণ নাম</label>
+                        <input type="text" id="pkg-name" name="name" required class="w-full rounded-xl border border-gray-700 bg-gray-900/80 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20" placeholder="আপনার নাম">
+                    </div>
+                    <div>
+                        <label for="pkg-email" class="mb-1.5 block text-sm font-medium text-gray-300">ইমেইল ঠিকানা</label>
+                        <input type="email" id="pkg-email" name="email" required class="w-full rounded-xl border border-gray-700 bg-gray-900/80 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20" placeholder="you@email.com">
+                    </div>
+                    <div>
+                        <label for="pkg-package" class="mb-1.5 block text-sm font-medium text-gray-300">নির্বাচিত প্যাকেজ</label>
+                        <input type="text" id="pkg-package" name="package" readonly class="w-full cursor-default rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-300 outline-none">
+                    </div>
+                    <div>
+                        <label for="pkg-message" class="mb-1.5 block text-sm font-medium text-gray-300">প্রজেক্ট বিবরণ / মেসেজ</label>
+                        <textarea id="pkg-message" name="message" rows="4" required class="w-full resize-y rounded-xl border border-gray-700 bg-gray-900/80 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20" placeholder="টার্গেট সাইট, ডেটার পরিমাণ, সময়সীমা…"></textarea>
+                    </div>
+                    <button type="submit" class="w-full rounded-xl bg-emerald-500 py-3.5 text-sm font-semibold text-gray-950 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 hover:shadow-emerald-500/40">
+                        অনুরোধ পাঠান
+                    </button>
+                </form>
+                <div id="pricing-modal-success" class="hidden py-6 text-center">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 ring-1 ring-emerald-500/40">
+                        <svg class="h-7 w-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h3 class="mt-4 text-xl font-bold text-white">ধন্যবাদ!</h3>
+                    <p class="mt-2 text-gray-400">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="border-t border-gray-800 bg-gray-900 px-6 py-12">
         <div class="mx-auto max-w-6xl">
             <div class="flex flex-col items-center justify-between gap-8 sm:flex-row sm:items-start">
@@ -296,6 +341,67 @@
             </p>
         </div>
     </footer>
+
+    <script>
+        (function () {
+            var modal = document.getElementById('pricing-modal');
+            var backdrop = document.getElementById('pricing-modal-backdrop');
+            var closeBtn = document.getElementById('pricing-modal-close');
+            var form = document.getElementById('pricing-modal-form');
+            var success = document.getElementById('pricing-modal-success');
+            var packageInput = document.getElementById('pkg-package');
+            var title = document.getElementById('pricing-modal-title');
+            var ctas = document.querySelectorAll('.pricing-cta');
+
+            function openModal(packageName) {
+                packageInput.value = packageName;
+                title.textContent = 'অনুরোধ: ' + packageName;
+                form.classList.remove('hidden');
+                success.classList.add('hidden');
+                form.reset();
+                packageInput.value = packageName;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                document.getElementById('pkg-name').focus();
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            ctas.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    openModal(btn.getAttribute('data-package'));
+                });
+            });
+
+            closeBtn.addEventListener('click', closeModal);
+            backdrop.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var body = new URLSearchParams(new FormData(form)).toString();
+                fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body
+                }).catch(function () { /* works offline / local file */ });
+
+                form.classList.add('hidden');
+                success.classList.remove('hidden');
+                setTimeout(closeModal, 3200);
+            });
+        })();
+    </script>
 
 </body>
 </html>
