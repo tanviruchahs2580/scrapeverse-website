@@ -1,0 +1,5 @@
+# ScrapeVerse static site — no build step (Tailwind via CDN)
+[build]
+  publish = "."
+
+# Contact forms are detected from data-netlify="true" in index.html & local.html
