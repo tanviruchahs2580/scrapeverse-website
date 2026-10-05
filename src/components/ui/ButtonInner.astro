@@ -1,0 +1,22 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './Icon.astro';
+
+interface Props {
+  icon?: IconName;
+  iconSize?: number;
+}
+
+const { icon, iconSize = 16 } = Astro.props;
+---
+
+<span>
+  <slot />
+</span>
+{icon && (
+  <Icon
+    name={icon}
+    size={iconSize}
+    class="transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover/btn:translate-x-0.5"
+  />
+)}

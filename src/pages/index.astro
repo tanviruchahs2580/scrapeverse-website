@@ -1,0 +1,21 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import LandingPage from '~/layouts/LandingPage.astro';
+import { getDictionary, type Locale } from '~/i18n';
+
+// No getStaticPaths on purpose: with `i18n` configured in astro.config.mjs,
+// Astro emits this route once per locale (`/` and `/bd/`) and sets
+// `Astro.currentLocale`. Declaring getStaticPaths here would replace that
+// mechanism and silently drop the Bangla route.
+const locale = (Astro.currentLocale ?? 'en') as Locale;
+const dict = getDictionary(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.meta.tagline}
+  description={dict.meta.defaultDescription}
+  pathname="/"
+>
+  <LandingPage dict={dict} locale={locale} />
+</BaseLayout>

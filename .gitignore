@@ -11,7 +11,23 @@ desktop.ini
 
 # Logs
 *.log
+npm-debug.log*
 
 # Env / secrets
 .env
 .env.*
+
+# Dependencies
+node_modules/
+
+# Astro
+dist/
+.astro/
+
+# Netlify
+.netlify/
+
+# Test output
+coverage/
+test-results/
+playwright-report/

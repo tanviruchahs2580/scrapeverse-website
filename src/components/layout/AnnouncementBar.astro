@@ -1,0 +1,40 @@
+---
+import Icon from '~/components/ui/Icon.astro';
+import { getDictionary, type Locale } from '~/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = getDictionary(locale);
+---
+
+<aside
+  id="announcement"
+  class="relative z-40 border-b border-line bg-gradient-to-r from-brand-500/12 via-ink-900 to-violet-500/12"
+>
+  <div class="shell flex items-center justify-center gap-3 py-2.5 pr-10 text-center">
+    <Icon name="sparkle" size={15} class="shrink-0 text-brand-300" />
+    <p class="text-[0.8125rem] leading-snug text-fg-muted">
+      {dict.announcement.text}
+      <a
+        href="#request"
+        class="ml-1.5 inline-flex items-center gap-1 font-semibold text-brand-200 underline-offset-4 transition-colors hover:text-brand-100 hover:underline"
+        data-track="announcement_cta"
+      >
+        {dict.announcement.cta}
+        <Icon name="arrow-right" size={13} />
+      </a>
+    </p>
+  </div>
+
+  <button
+    type="button"
+    id="announcement-close"
+    class="absolute top-1/2 right-4 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-fg-faint transition-colors hover:bg-white/5 hover:text-fg"
+    aria-label={dict.announcement.dismiss}
+  >
+    <Icon name="close" size={15} />
+  </button>
+</aside>

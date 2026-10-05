@@ -1,0 +1,124 @@
+---
+import Aurora from '~/components/ui/Aurora.astro';
+import Button from '~/components/ui/Button.astro';
+import Counter from '~/components/ui/Counter.astro';
+import HeroTerminal from '~/components/hero/HeroTerminal.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+
+// Map the display string to a numeric target for the count-up. Values that are
+// purely symbolic (e.g. "12 ঘণ্টা") are skipped rather than animated badly.
+const numericFor = (display: string): number | undefined => {
+  const match = display.match(/^([\d.,]+)/);
+  if (!match?.[1]) return undefined;
+  const parsed = Number(match[1].replace(/,/g, ''));
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+---
+
+<section class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28">
+  <Aurora position="top" grain />
+
+  <div class="shell relative">
+    <div class="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
+      <!-- Copy -->
+      <div class="max-w-2xl">
+        <p
+          class="eyebrow inline-flex items-center gap-2 rounded-full border border-line-strong bg-ink-900/70 px-3.5 py-1.5 backdrop-blur-sm"
+          data-reveal
+        >
+          <span class="relative flex h-1.5 w-1.5">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-300 opacity-70"></span>
+            <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand-300"></span>
+          </span>
+          {dict.hero.eyebrow}
+        </p>
+
+        <h1 class="mt-7 text-display font-semibold text-fg" data-reveal style="--reveal-delay:60ms">
+          {dict.hero.titleTop}
+          <span class="block text-gradient">{dict.hero.titleBottom}</span>
+        </h1>
+
+        <p class="mt-7 max-w-xl text-lead text-fg-muted" data-reveal style="--reveal-delay:130ms">
+          {dict.hero.lead}
+        </p>
+
+        <div
+          class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
+          data-reveal
+          style="--reveal-delay:200ms"
+        >
+          <Button
+            href="#request"
+            size="lg"
+            id="hero-primary"
+            icon="arrow-right"
+            track="hero_primary"
+          >
+            {dict.hero.primaryCta}
+          </Button>
+          <Button href="#process" size="lg" variant="secondary" track="hero_secondary">
+            {dict.hero.secondaryCta}
+          </Button>
+        </div>
+
+        <p
+          class="mt-7 flex items-start gap-2 text-sm text-fg-faint"
+          data-reveal
+          style="--reveal-delay:260ms"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="mt-0.5 shrink-0 text-brand-400"
+            aria-hidden="true"
+          >
+            <path d="M12 3l7.5 3v6c0 4.2-3 7.7-7.5 9-4.5-1.3-7.5-4.8-7.5-9V6z"></path>
+            <path d="m9 12 2.2 2.2L15.5 10"></path>
+          </svg>
+          {dict.hero.note}
+        </p>
+      </div>
+
+      <!-- Product visual -->
+      <div data-reveal="scale" style="--reveal-delay:180ms">
+        <HeroTerminal />
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <dl
+      class="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:mt-20 lg:grid-cols-4"
+      data-reveal
+      style="--reveal-delay:120ms"
+    >
+      {dict.hero.stats.map((stat) => (
+        <div class="bg-ink-900/80 px-5 py-6 backdrop-blur-sm sm:px-6">
+          <dt class="sr-only">{stat.label}</dt>
+          <dd>
+            <Counter
+              display={stat.value}
+              to={numericFor(stat.value)}
+              class="block font-display text-2xl font-semibold tracking-tight text-fg sm:text-3xl"
+            />
+            <span class="mt-1.5 block text-[0.8125rem] leading-snug text-fg-subtle">
+              {stat.label}
+            </span>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

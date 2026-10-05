@@ -1,0 +1,120 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Button from '~/components/ui/Button.astro';
+import { getDictionary, pathForLocale } from '~/i18n';
+import { localizedPostPath } from '~/content/posts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    'posts',
+    (entry) => !entry.data.draft && entry.data.locale === 'en',
+  );
+  return posts.map((entry) => ({ params: { slug: entry.id } }));
+}
+
+const locale = 'en' as const;
+const dict = getDictionary(locale);
+const post = (await getCollection('posts', (entry) => entry.id === Astro.params.slug)).at(0);
+
+if (!post) return Astro.redirect(pathForLocale('/blog/', locale));
+
+const { Content, headings } = await render(post);
+const dateFormat = new Intl.DateTimeFormat('en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const minutes = Math.max(1, Math.round((post.body ?? '').split(/\s+/).length / 220));
+
+// Slugs are translated, so the Bangla twin is found by translationKey rather
+// than by mirroring the slug.
+const altPath = await localizedPostPath(post, 'bd');
+---
+
+<BaseLayout
+  locale={locale}
+  title={post.data.title}
+  description={post.data.description}
+  pathname={`/blog/${post.id}/`}
+  altPathname={altPath}
+>
+  <article class="relative">
+    <div class="shell py-16 lg:py-20">
+      <div class="mx-auto max-w-2xl">
+        <p data-reveal>
+          <a
+            href={pathForLocale('/blog/', locale)}
+            class="inline-flex items-center gap-1.5 text-sm text-fg-subtle transition-colors hover:text-brand-300"
+          >
+            ← {dict.blog.backToBlog}
+          </a>
+        </p>
+
+        <header class="mt-8" data-reveal>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <time
+              datetime={post.data.publishedAt.toISOString()}
+              class="font-mono text-[0.6875rem] text-fg-faint"
+            >
+              {dict.blog.published}: {dateFormat.format(post.data.publishedAt)}
+            </time>
+            <span class="text-fg-faint" aria-hidden="true">
+              ·
+            </span>
+            <span class="font-mono text-[0.6875rem] text-fg-faint">
+              {minutes} {dict.blog.readingTime}
+            </span>
+          </div>
+
+          <h1 class="mt-5 text-h2 font-semibold text-fg">{post.data.title}</h1>
+          <p class="mt-5 text-lead text-fg-muted">{post.data.description}</p>
+          <p class="mt-6 border-t border-line pt-6 text-sm text-fg-faint">{post.data.author}</p>
+        </header>
+
+        <div
+          class="prose-sv prose-sv-dark mt-12 max-w-none text-[1.0625rem] leading-[1.75] text-fg-muted"
+          data-reveal
+        >
+          <Content />
+        </div>
+
+        <div
+          class="mt-16 rounded-[var(--radius-card)] border border-line bg-ink-900/50 p-8"
+          data-reveal
+        >
+          <h2 class="text-h3 font-semibold text-fg">{dict.finalCta.title}</h2>
+          <p class="mt-3 text-[0.9375rem] leading-relaxed text-fg-subtle">{dict.finalCta.note}</p>
+          <div class="mt-7">
+            <Button href={pathForLocale('/#request', locale)} icon="arrow-right" track="blog_cta">
+              {dict.hero.primaryCta}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {headings.length > 2 && (
+        <nav
+          class="mx-auto mt-16 max-w-2xl border-t border-line pt-8"
+          aria-label={post.data.title}
+          data-reveal
+        >
+          <p class="font-mono text-[0.6875rem] tracking-[0.16em] text-fg-faint uppercase">
+            On this page
+          </p>
+          <ol class="mt-4 space-y-2.5">
+            {headings
+              .filter((heading) => heading.depth === 2)
+              .map((heading) => (
+                <li class="text-sm text-fg-subtle">
+                  <a href={`#${heading.slug}`} class="transition-colors hover:text-brand-300">
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+          </ol>
+        </nav>
+      )}
+    </div>
+  </article>
+</BaseLayout>

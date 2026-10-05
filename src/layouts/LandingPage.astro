@@ -1,0 +1,34 @@
+---
+import LogoStrip from '~/components/sections/LogoStrip.astro';
+import Hero from '~/components/sections/Hero.astro';
+import HowItWorks from '~/components/sections/HowItWorks.astro';
+import Capabilities from '~/components/sections/Capabilities.astro';
+import SampleOutput from '~/components/sections/SampleOutput.astro';
+import Proof from '~/components/sections/Proof.astro';
+import Pricing from '~/components/sections/Pricing.astro';
+import Compliance from '~/components/sections/Compliance.astro';
+import Faq from '~/components/sections/Faq.astro';
+import FinalCta from '~/components/sections/FinalCta.astro';
+import RequestWizard from '~/components/sections/RequestWizard.astro';
+import type { Dictionary } from '~/i18n';
+import type { Locale } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+  locale: Locale;
+}
+
+const { dict, locale } = Astro.props;
+---
+
+<Hero dict={dict} />
+<LogoStrip dict={dict} />
+<HowItWorks dict={dict} />
+<Capabilities dict={dict} />
+<SampleOutput dict={dict} />
+<Proof dict={dict} />
+<Pricing dict={dict} />
+<Compliance dict={dict} />
+<Faq dict={dict} />
+<FinalCta dict={dict} />
+<RequestWizard dict={dict} locale={locale} />

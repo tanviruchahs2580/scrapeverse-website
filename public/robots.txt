@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Nothing here is private, but there is no value in indexing the locale
+# variants of the 404 either.
+Disallow: /404/
+Disallow: /bd/404/
+
+Sitemap: https://scrapeverse.com/sitemap-index.xml

@@ -1,0 +1,191 @@
+---
+import Section from '~/components/ui/Section.astro';
+import SectionHeader from '~/components/ui/SectionHeader.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const plans = dict.pricing.plans;
+const rows = dict.pricing.comparison.rows;
+---
+
+<Section id="pricing" labelledBy="pricing-heading" tint>
+  <div class="shell">
+    <SectionHeader
+      id="pricing-heading"
+      eyebrow={dict.pricing.eyebrow}
+      title={dict.pricing.title}
+      lead={dict.pricing.lead}
+    />
+
+    <!-- Billing toggle -->
+    <div class="mt-10 flex justify-center" data-reveal>
+      <div
+        id="pricing-toggle"
+        role="group"
+        aria-label={dict.pricing.eyebrow}
+        class="inline-flex items-center gap-1 rounded-full border border-line bg-ink-900/80 p-1 backdrop-blur-sm"
+      >
+        <button
+          type="button"
+          data-billing="monthly"
+          aria-pressed="true"
+          class="rounded-full px-5 py-2 text-sm font-semibold transition-[background-color,color] duration-300 ease-[var(--ease-out-expo)]"
+        >
+          {dict.pricing.monthly}
+        </button>
+        <button
+          type="button"
+          data-billing="oneTime"
+          aria-pressed="false"
+          class="rounded-full px-5 py-2 text-sm font-semibold transition-[background-color,color] duration-300 ease-[var(--ease-out-expo)]"
+        >
+          {dict.pricing.oneTime}
+        </button>
+      </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="mt-12 grid items-start gap-5 lg:mt-14 lg:grid-cols-3 lg:gap-6">
+      {plans.map((plan, index) => (
+        <article
+          class:list={[
+            'relative flex h-full flex-col rounded-[var(--radius-card)] p-7 backdrop-blur-sm transition-[transform,border-color,box-shadow] duration-400 ease-[var(--ease-out-expo)]',
+            plan.featured
+              ? 'border border-brand-500/45 bg-gradient-to-b from-brand-500/12 via-ink-900/85 to-ink-900/85 shadow-[0_28px_70px_-30px_rgb(18_184_214/0.4)] ring-1 ring-brand-500/25 lg:-my-4 lg:py-11'
+              : 'border border-line bg-ink-900/50 hover:-translate-y-1 hover:border-line-strong',
+          ]}
+          data-reveal
+          style={`--reveal-delay:${index * 80}ms`}
+        >
+          {plan.featured && plan.badge && (
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-400 px-3.5 py-1 text-[0.6875rem] font-bold tracking-wide text-ink-950 uppercase shadow-[0_6px_20px_-6px_rgb(18_184_214/0.8)]">
+              {plan.badge}
+            </span>
+          )}
+
+          <h3 class="text-h3 font-semibold text-fg">{plan.name}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-fg-subtle">{plan.tagline}</p>
+
+          <div class="mt-7">
+            <div class="flex items-baseline gap-1.5">
+              <span
+                class="font-display text-3xl font-semibold tracking-tight text-fg sm:text-[2.125rem]"
+                data-price
+                data-price-monthly={plan.monthlyPrice}
+                data-price-one-time={plan.oneTimePrice ?? undefined}
+                data-suffix-monthly={plan.priceSuffix}
+                data-suffix-one-time={plan.oneTimeSuffix}
+              >
+                {plan.monthlyPrice}
+              </span>
+              <span class="text-sm text-fg-faint" data-price-suffix>
+                {plan.priceSuffix}
+              </span>
+            </div>
+            {!plan.customPrice && (
+              <p class="mt-1.5 text-[0.8125rem] text-fg-faint">
+                {dict.pricing.oneTime}: <span class="text-fg-subtle">{plan.oneTimePrice}</span>
+              </p>
+            )}
+          </div>
+
+          <ul class="mt-8 flex-1 space-y-3.5">
+            {plan.features.map((feature) => (
+              <li class="flex items-start gap-3 text-[0.9375rem] text-fg-muted">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-400/12">
+                  <Icon name="check" size={12} class="text-brand-300" />
+                </span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+
+          <Button
+            href="#request"
+            variant={plan.featured ? 'primary' : 'secondary'}
+            size="md"
+            class="mt-9 w-full"
+            track={`pricing_${plan.id}`}
+          >
+            {plan.cta}
+          </Button>
+        </article>
+      ))}
+    </div>
+
+    <!-- Comparison table -->
+    <div class="mt-20 lg:mt-24" data-reveal>
+      <h3 class="text-center font-mono text-xs font-semibold tracking-[0.16em] text-fg-faint uppercase">
+        {dict.pricing.comparison.label}
+      </h3>
+
+      <div class="mt-6 overflow-hidden rounded-[var(--radius-card)] border border-line bg-ink-900/40 backdrop-blur-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[38rem] border-collapse text-left">
+            <thead>
+              <tr class="border-b border-line bg-ink-950/40">
+                <th
+                  scope="col"
+                  class="px-5 py-3.5 font-mono text-[0.6875rem] tracking-[0.1em] text-fg-faint uppercase"
+                >
+                  {dict.pricing.comparison.label}
+                </th>
+                {plans.map((plan) => (
+                  <th
+                    scope="col"
+                    class:list={[
+                      'px-5 py-3.5 text-center font-display text-sm font-semibold',
+                      plan.featured ? 'text-brand-200' : 'text-fg-muted',
+                    ]}
+                  >
+                    {plan.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr class:list={[rowIndex < rows.length - 1 && 'border-b border-line/70']}>
+                  <th scope="row" class="px-5 py-3.5 text-[0.875rem] font-normal text-fg-muted">
+                    {row.feature}
+                  </th>
+                  {[row.starter, row.growth, row.enterprise].map((value) => (
+                    <td class="px-5 py-3.5 text-center">
+                      {typeof value === 'boolean' ? (
+                        value ? (
+                          <>
+                            <Icon name="check" size={16} class="mx-auto text-brand-300" />
+                            <span class="sr-only">included</span>
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="minus" size={16} class="mx-auto text-ink-600" />
+                            <span class="sr-only">not included</span>
+                          </>
+                        )
+                      ) : (
+                        <span class="font-mono text-[0.8125rem] text-fg-subtle tabular-nums">
+                          {value}
+                        </span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="mx-auto mt-10 max-w-2xl text-center text-[0.8125rem] leading-relaxed text-fg-faint">
+      {dict.pricing.footnote}
+    </p>
+  </div>
+</Section>

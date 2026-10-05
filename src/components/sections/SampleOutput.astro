@@ -1,0 +1,124 @@
+---
+import Section from '~/components/ui/Section.astro';
+import SectionHeader from '~/components/ui/SectionHeader.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+
+// Stock state gets a colour cue so the table reads as data, not decoration.
+const stockTone: Record<string, string> = {
+  in_stock: 'text-ok-400',
+  low_stock: 'text-warn-400',
+  out_of_stock: 'text-fg-faint',
+};
+const bdStockTone: Record<string, string> = {
+  'স্টকে আছে': 'text-ok-400',
+  'স্টক কম': 'text-warn-400',
+  'স্টকে নেই': 'text-fg-faint',
+};
+const tones = dict.meta.siteName === 'স্ক্র্যাপভার্স' ? bdStockTone : stockTone;
+---
+
+<Section id="sample" labelledBy="sample-heading" tint>
+  <div class="shell">
+    <SectionHeader
+      id="sample-heading"
+      eyebrow={dict.sample.eyebrow}
+      title={dict.sample.title}
+      lead={dict.sample.lead}
+      action
+    >
+      <ul class="mt-2 flex flex-wrap items-center justify-center gap-2">
+        {dict.sample.chips.map((chip) => (
+          <li>
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-ink-900/80 px-3 py-1.5 font-mono text-[0.6875rem] tracking-wide text-fg-subtle">
+              <Icon name="check" size={12} class="text-brand-400" />
+              {chip}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </SectionHeader>
+
+    <div class="mt-14 lg:mt-16" data-reveal="scale">
+      <div class="overflow-hidden rounded-[var(--radius-panel)] border border-line-strong bg-ink-900/70 shadow-[var(--shadow-panel)] backdrop-blur-sm">
+        <!-- Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3.5">
+          <p class="font-mono text-xs text-fg-faint">{dict.sample.tableLabel}</p>
+          <p class="inline-flex items-center gap-1.5 font-mono text-[0.6875rem] text-fg-faint">
+            <span class="h-1.5 w-1.5 rounded-full bg-ok-400"></span>
+            {dict.sample.ctaNote}
+          </p>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[46rem] border-collapse text-left">
+            <caption class="sr-only">{dict.sample.tableLabel}</caption>
+            <thead>
+              <tr class="border-b border-line bg-ink-950/40">
+                {dict.sample.columns.map((column) => (
+                  <th
+                    scope="col"
+                    class="px-5 py-3 font-mono text-[0.6875rem] font-semibold tracking-[0.1em] text-fg-faint uppercase whitespace-nowrap"
+                  >
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dict.sample.rows.map((row, rowIndex) => (
+                <tr
+                  class:list={[
+                    'transition-colors duration-250 hover:bg-white/[0.03]',
+                    rowIndex < dict.sample.rows.length - 1 && 'border-b border-line/70',
+                  ]}
+                >
+                  {row.map((cell, cellIndex) => (
+                    <td
+                      class:list={[
+                        'px-5 py-3.5 font-mono text-[0.8125rem] whitespace-nowrap',
+                        cellIndex === 0 && 'text-fg-faint',
+                        cellIndex === 1 &&
+                          'max-w-[16rem] truncate font-sans text-[0.875rem] text-fg',
+                        cellIndex === 2 && 'text-brand-200 tabular-nums',
+                        cellIndex === 3 && (tones[cell] ?? 'text-fg-subtle'),
+                        cellIndex === 4 && 'text-fg-subtle tabular-nums',
+                        cellIndex === 5 && 'text-fg-faint',
+                      ]}
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex flex-col items-start justify-between gap-4 border-t border-line bg-ink-950/40 px-5 py-4 sm:flex-row sm:items-center">
+          <p class="font-mono text-xs text-fg-faint">
+            products.csv · UTF-8 · 1180 rows · schema v3
+          </p>
+          <Button
+            href="#request"
+            size="sm"
+            variant="secondary"
+            icon="download"
+            track="sample_download"
+          >
+            {dict.sample.cta}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>

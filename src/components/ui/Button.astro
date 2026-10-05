@@ -1,0 +1,81 @@
+---
+import ButtonInner from './ButtonInner.astro';
+import type { IconName } from './Icon.astro';
+
+type Variant = 'primary' | 'secondary' | 'ghost';
+type Size = 'sm' | 'md' | 'lg';
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  size?: Size;
+  /** Arrow glyph appended after the label. */
+  icon?: IconName;
+  class?: string;
+  id?: string;
+  type?: 'button' | 'submit';
+  disabled?: boolean;
+  ariaLabel?: string;
+  /** Analytics event name for this CTA. */
+  track?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon = 'arrow-right',
+  class: className = '',
+  id,
+  type = 'button',
+  disabled = false,
+  ariaLabel,
+  track,
+} = Astro.props;
+
+const base =
+  'group/btn relative inline-flex items-center justify-center gap-2 rounded-full font-semibold ' +
+  'transition-[transform,background-color,border-color,box-shadow,color] duration-300 ' +
+  'ease-[var(--ease-out-expo)] select-none active:translate-y-px ' +
+  'disabled:pointer-events-none disabled:opacity-55';
+
+const sizes: Record<Size, string> = {
+  sm: 'px-4 py-2 text-[0.8125rem]',
+  md: 'px-5.5 py-3 text-sm',
+  lg: 'px-7 py-3.5 text-[0.9375rem]',
+};
+
+const variants: Record<Variant, string> = {
+  primary:
+    'bg-brand-400 text-ink-950 shadow-[0_10px_36px_-10px_rgb(18_184_214/0.65)] ' +
+    'hover:-translate-y-0.5 hover:bg-brand-300 hover:shadow-[0_14px_44px_-10px_rgb(18_184_214/0.85)]',
+  secondary:
+    'border border-line-strong bg-white/[0.04] text-fg backdrop-blur-sm ' +
+    'hover:-translate-y-0.5 hover:border-brand-400/60 hover:bg-brand-400/10 hover:text-brand-200',
+  ghost: 'text-fg-muted hover:bg-white/[0.05] hover:text-fg',
+};
+
+const classes = `${base} ${sizes[size]} ${variants[variant]} ${className}`;
+---
+
+{href ? (
+  <a id={id} href={href} class={classes} aria-label={ariaLabel} data-track={track} data-cta={id}>
+    <ButtonInner icon={icon} iconSize={size === 'lg' ? 18 : 16}>
+      <slot />
+    </ButtonInner>
+  </a>
+) : (
+  <button
+    id={id}
+    type={type}
+    class={classes}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    data-track={track}
+    data-cta={id}
+  >
+    <ButtonInner icon={icon} iconSize={size === 'lg' ? 18 : 16}>
+      <slot />
+    </ButtonInner>
+  </button>
+)}
