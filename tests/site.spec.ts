@@ -242,6 +242,16 @@ function navLink(page: Page, selector: string) {
   return page.locator(selector).filter({ visible: true }).first();
 }
 
+/**
+ * The wizard treats a too-fast submission as a bot and fakes success instead
+ * of POSTing. Wait for it to boot, then out-wait its minimum-fill window so
+ * submissions exercise the real endpoint.
+ */
+async function waitForHumanPacing(page: Page) {
+  await expect(page.locator('[data-step="2"]')).toBeHidden();
+  await page.waitForTimeout(2600);
+}
+
 test.describe('navigation', () => {
   test('in-page anchors scroll to their sections', async ({ page }) => {
     await page.goto('/');
@@ -560,6 +570,7 @@ test.describe('request wizard', () => {
     await page.locator('[data-field="name"]').fill('Jane Tester');
     await page.locator('[data-field="email"]').fill('jane@example.com');
     await page.locator('input[name="consent"]').check();
+    await waitForHumanPacing(page);
     await page.locator('#wizard-submit').click();
 
     await expect(page.locator('[data-success]')).toBeVisible({ timeout: 10_000 });
@@ -602,6 +613,7 @@ test.describe('request wizard', () => {
     await page.locator('[data-field="company"]').fill('Example Ltd');
     await page.locator('[data-field="budget"]').selectOption({ index: 1 });
     await page.locator('input[name="consent"]').check();
+    await waitForHumanPacing(page);
     await page.locator('#wizard-submit').click();
 
     await expect(page.locator('[data-success]')).toBeVisible({ timeout: 10_000 });
@@ -648,6 +660,7 @@ test.describe('request wizard', () => {
     await page.locator('[data-field="name"]').fill('Jane Tester');
     await page.locator('[data-field="email"]').fill('jane@example.com');
     await page.locator('input[name="consent"]').check();
+    await waitForHumanPacing(page);
     await page.locator('#wizard-submit').click();
 
     await expect(page.locator('#request-form')).toBeVisible();
