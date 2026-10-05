@@ -1,0 +1,28 @@
+---
+/**
+ * Stat figure that counts up when it scrolls into view.
+ *
+ * `display` is always present in the server-rendered markup and is what
+ * search engines, no-JS visitors and reduced-motion users see. The animation in
+ * `main.ts` derives decimals from `to`, so `99.9` keeps one decimal while `380`
+ * stays whole — no locale library, no hydration.
+ */
+
+interface Props {
+  /** Final, server-rendered value. Used verbatim when JS is unavailable. */
+  display: string;
+  to?: number;
+  duration?: number;
+  class?: string;
+}
+
+const { display, to, duration = 1600, class: className = '' } = Astro.props;
+---
+
+<span
+  class={className}
+  data-counter={to !== undefined ? String(to) : undefined}
+  data-counter-dur={to !== undefined ? String(duration) : undefined}
+>
+  {display}
+</span>

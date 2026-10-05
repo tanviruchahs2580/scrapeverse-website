@@ -1,0 +1,32 @@
+---
+import Reveal from '~/components/ui/Reveal.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<section aria-label={dict.logos.label} class="relative border-t border-line">
+  <div class="shell py-12 lg:py-14">
+    <Reveal>
+      <p class="text-center font-mono text-[0.6875rem] font-medium tracking-[0.16em] text-fg-faint uppercase">
+        {dict.logos.label}
+      </p>
+    </Reveal>
+
+    <ul class="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 lg:gap-x-20">
+      {dict.logos.items.map((name, index) => (
+        <li data-reveal style={`--reveal-delay:${index * 60}ms`}>
+          <span class="font-display text-base font-semibold tracking-[0.08em] text-fg-faint uppercase transition-colors duration-400 hover:text-fg-subtle sm:text-lg">
+            {name}
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-8 text-center text-xs text-fg-faint">{dict.logos.disclaimer}</p>
+  </div>
+</section>

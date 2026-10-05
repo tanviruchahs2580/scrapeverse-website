@@ -1,0 +1,140 @@
+---
+import Logo from '~/components/brand/Logo.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import { getDictionary, pathForLocale, type Locale } from '~/i18n';
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+  /** Other-language path, when it is not just `pathname` with a locale prefix. */
+  switchPath?: string;
+}
+
+const { locale, pathname, switchPath } = Astro.props;
+const dict = getDictionary(locale);
+
+const other: Locale = locale === 'en' ? 'bd' : 'en';
+const switchHref = switchPath ?? pathForLocale(pathname, other);
+const switchLabel = locale === 'en' ? dict.nav.switchToBd : dict.nav.switchToEn;
+
+const links = [
+  { href: `${pathForLocale('/', locale)}#capabilities`, label: dict.nav.services },
+  { href: `${pathForLocale('/', locale)}#process`, label: dict.nav.process },
+  { href: `${pathForLocale('/', locale)}#pricing`, label: dict.nav.pricing },
+  { href: `${pathForLocale('/', locale)}#compliance`, label: dict.nav.compliance },
+  { href: `${pathForLocale('/', locale)}#faq`, label: dict.nav.faq },
+];
+---
+
+<header
+  id="site-nav"
+  class="sticky top-0 z-50 border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-400 ease-[var(--ease-out-expo)]"
+>
+  <nav class="shell" aria-label="Primary">
+    <div class="flex h-18 items-center justify-between gap-4">
+      <a
+        href={pathForLocale('/', locale)}
+        class="rounded-lg transition-opacity hover:opacity-85"
+        data-track="nav_logo"
+      >
+        <Logo />
+        <span class="sr-only">{dict.meta.siteName} — home</span>
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="hidden items-center gap-1 lg:flex">
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="relative inline-flex items-center rounded-lg px-3.5 py-2 text-sm font-medium text-fg-subtle transition-colors duration-250 hover:text-fg"
+              data-nav-link
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="flex items-center gap-2.5">
+        <a
+          href={switchHref}
+          hreflang={locale === 'en' ? 'bn-BD' : 'en'}
+          lang={locale === 'en' ? 'bn-BD' : 'en'}
+          class="hidden items-center gap-1.5 rounded-full border border-line px-3.5 py-2 font-mono text-xs font-medium tracking-wide text-fg-subtle transition-colors duration-250 hover:border-line-strong hover:text-fg sm:inline-flex"
+          data-track="nav_language"
+        >
+          <Icon name="globe" size={14} />
+          {switchLabel}
+        </a>
+
+        <Button
+          href={`${pathForLocale('/', locale)}#request`}
+          size="sm"
+          id="nav-cta"
+          track="nav_cta"
+          class="hidden sm:inline-flex"
+        >
+          {dict.nav.sampleCta}
+        </Button>
+
+        <button
+          type="button"
+          id="nav-toggle"
+          class="group inline-flex h-10 w-10 items-center justify-center rounded-xl border border-line text-fg transition-colors duration-250 hover:bg-white/5 lg:hidden"
+          aria-expanded="false"
+          aria-controls="nav-drawer"
+          aria-label={dict.nav.openMenu}
+        >
+          <span class="sr-only">{dict.nav.openMenu}</span>
+          <Icon name="menu" size={20} class="group-aria-expanded:hidden" />
+          <Icon name="close" size={20} class="hidden group-aria-expanded:block" />
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div
+    id="nav-drawer"
+    class="invisible absolute inset-x-0 top-full max-h-0 overflow-hidden border-b border-line bg-ink-950/95 opacity-0 backdrop-blur-xl transition-[max-height,opacity] duration-400 ease-[var(--ease-out-expo)] lg:hidden"
+  >
+    <ul class="shell flex flex-col gap-1 py-5">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-fg-muted transition-colors duration-250 hover:bg-white/5 hover:text-fg"
+            data-drawer-link
+          >
+            {link.label}
+            <Icon name="arrow-up-right" size={16} />
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="shell flex flex-col gap-3 border-t border-line py-5">
+      <Button
+        href={`${pathForLocale('/', locale)}#request`}
+        size="md"
+        track="drawer_cta"
+        class="w-full"
+        data-drawer-cta
+      >
+        {dict.nav.sampleCta}
+      </Button>
+      <a
+        href={switchHref}
+        hreflang={locale === 'en' ? 'bn-BD' : 'en'}
+        lang={locale === 'en' ? 'bn-BD' : 'en'}
+        data-track="nav_language"
+        class="inline-flex items-center justify-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-xs font-medium tracking-wide text-fg-subtle transition-colors duration-250 hover:border-line-strong hover:text-fg"
+      >
+        <Icon name="globe" size={14} />
+        {switchLabel}
+      </a>
+    </div>
+  </div>
+</header>

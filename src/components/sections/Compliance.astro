@@ -1,0 +1,45 @@
+---
+import Section from '~/components/ui/Section.astro';
+import SectionHeader from '~/components/ui/SectionHeader.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import type { IconName } from '~/components/ui/Icon.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<Section id="compliance" labelledBy="compliance-heading">
+  <div class="shell">
+    <SectionHeader
+      id="compliance-heading"
+      eyebrow={dict.compliance.eyebrow}
+      title={dict.compliance.title}
+      lead={dict.compliance.lead}
+    />
+
+    <div class="mt-14 grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
+      {dict.compliance.points.map((point, index) => (
+        <div class="flex gap-4" data-reveal style={`--reveal-delay:${(index % 3) * 80}ms`}>
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-500/35 bg-brand-400/10 text-brand-300">
+            <Icon name={point.icon as IconName} size={17} />
+          </span>
+          <div class="min-w-0">
+            <h3 class="text-base font-semibold text-fg">{point.title}</h3>
+            <p class="mt-2 text-[0.9375rem] leading-relaxed text-fg-subtle">{point.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-16 flex justify-center lg:mt-20" data-reveal>
+      <Button href="#request" size="lg" variant="secondary" track="compliance_brief">
+        {dict.compliance.cta}
+      </Button>
+    </div>
+  </div>
+</Section>

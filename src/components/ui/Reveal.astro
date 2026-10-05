@@ -1,0 +1,30 @@
+---
+/**
+ * Scroll-reveal wrapper.
+ *
+ * The hidden state lives in `global.css` under a `.js` class that an inline
+ * head script adds. Consequence: if JavaScript is disabled or the observer
+ * fails, content renders normally instead of staying invisible forever.
+ */
+
+interface Props {
+  /** Milliseconds to wait before this element animates in. */
+  delay?: number;
+  variant?: 'up' | 'scale' | 'blur';
+  /** Element to render as. Restricted to real HTML tags. */
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+}
+
+const { delay = 0, variant = 'up', as: Tag = 'div', class: className = '' } = Astro.props;
+
+const variantAttr = variant === 'scale' ? 'scale' : variant === 'blur' ? 'blur' : '';
+---
+
+<Tag
+  data-reveal={variantAttr === '' ? true : variantAttr}
+  style={delay ? `--reveal-delay:${delay}ms` : undefined}
+  class={className}
+>
+  <slot />
+</Tag>

@@ -1,0 +1,62 @@
+---
+/**
+ * Section header: eyebrow + heading + lead, with the entrance animation wired
+ * in. Every section on the page uses this so vertical alignment between
+ * neighbouring sections is guaranteed by construction.
+ */
+
+import Reveal from './Reveal.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  id?: string;
+  align?: 'center' | 'left';
+  class?: string;
+  /** Slot for a CTA or extra control rendered under the lead. */
+  action?: boolean;
+}
+
+const {
+  eyebrow,
+  title,
+  lead,
+  id,
+  align = 'center',
+  class: className = '',
+  action = false,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'flex flex-col gap-5',
+    align === 'center' && 'mx-auto max-w-2xl items-center text-center',
+    className,
+  ]}
+>
+  <Reveal>
+    <p class="eyebrow">{eyebrow}</p>
+  </Reveal>
+
+  <Reveal delay={70}>
+    <h2 id={id} class="text-h2 font-semibold text-fg">
+      {title}
+    </h2>
+  </Reveal>
+
+  {lead && (
+    <Reveal delay={140}>
+      <p class:list={['text-lead text-fg-muted', align === 'center' && 'max-w-2xl']}>{lead}</p>
+    </Reveal>
+  )}
+
+  {action && (
+    <Reveal delay={210}>
+      <div class="mt-2">
+        <slot />
+      </div>
+    </Reveal>
+  )}
+</div>

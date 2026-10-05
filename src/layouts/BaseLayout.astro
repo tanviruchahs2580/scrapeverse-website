@@ -1,0 +1,143 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+// Bangla needs its own face: Inter has no Bengali glyphs, so without this the
+// /bd/ routes fall back to a system font with different metrics.
+import '@fontsource-variable/noto-sans-bengali';
+import '../styles/global.css';
+
+import AnnouncementBar from '~/components/layout/AnnouncementBar.astro';
+import Nav from '~/components/layout/Nav.astro';
+import Footer from '~/components/layout/Footer.astro';
+import StickyCta from '~/components/layout/StickyCta.astro';
+import { getDictionary, HTML_LANG, OG_LOCALE, pathForLocale, type Locale } from '~/i18n';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Path of the current page, e.g. `/blog/`. Used for canonical + hreflang. */
+  pathname: string;
+  /**
+   * Path of the same page in the other language, when it differs from simply
+   * prefixing `pathname`. Blog posts need this because their slugs are
+   * translated. Omit when the default mapping is correct.
+   */
+  altPathname?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** `article` for blog posts, `website` elsewhere. */
+  ogType?: 'website' | 'article';
+  /** Rendered without Nav/Footer chrome (used by the 404 page). */
+  bare?: boolean;
+  noindex?: boolean;
+  publishedTime?: string;
+}
+
+const {
+  locale,
+  title,
+  description,
+  pathname,
+  altPathname,
+  ogImage = '/og.png',
+  ogImageAlt = 'ScrapeVerse — managed web scraping and data extraction',
+  ogType = 'website',
+  bare = false,
+  noindex = false,
+  publishedTime,
+} = Astro.props;
+
+const dict = getDictionary(locale);
+const siteName = dict.meta.siteName;
+const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
+
+// Astro's `site` option provides the canonical origin, so build absolute URLs.
+const origin = Astro.site?.origin ?? 'https://scrapeverse.com';
+const canonical = new URL(pathname, origin).href;
+const ogImageUrl = new URL(ogImage, origin).href;
+
+const altLocale: Locale = locale === 'en' ? 'bd' : 'en';
+const altPath = altPathname ?? pathForLocale(pathname, altLocale);
+const altHref = new URL(altPath, origin).href;
+---
+
+<!doctype html>
+<html lang={HTML_LANG[locale]} class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- hreflang: bidirectional, plus x-default pointing at English -->
+    <link rel="alternate" hreflang={HTML_LANG[locale]} href={canonical} />
+    <link rel="alternate" hreflang={HTML_LANG[altLocale]} href={altHref} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', origin).href} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    <meta property="og:locale:alternate" content={OG_LOCALE[altLocale]} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#05070b" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <slot name="head" />
+
+    <script is:inline>
+      // Set before first paint so the reveal system knows JS is available.
+      // Without this, `[data-reveal]` content would stay at opacity 0.
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-ink-950 font-sans text-fg antialiased">
+    <a
+      href="#main"
+      class="skip-link rounded-lg bg-brand-400 px-4 py-2.5 text-sm font-semibold text-ink-950"
+    >
+      {dict.nav.skipToContent}
+    </a>
+
+    {!bare && <AnnouncementBar locale={locale} />}
+    {!bare && <Nav locale={locale} pathname={pathname} switchPath={altPath} />}
+
+    <main id="main">
+      <slot />
+    </main>
+
+    {!bare && <Footer locale={locale} />}
+    {!bare && <StickyCta locale={locale} />}
+
+    <script>
+      import '~/scripts/main';
+    </script>
+  </body>
+</html>

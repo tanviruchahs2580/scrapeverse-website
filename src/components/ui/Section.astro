@@ -1,0 +1,32 @@
+---
+/**
+ * Section wrapper. Owns the vertical rhythm for the whole page so individual
+ * sections never hand-roll padding (the previous site mixed py-20, py-24 and
+ * pt-16/pb-20, which is why the scroll rhythm felt uneven).
+ */
+
+interface Props {
+  id?: string;
+  /** Removes the top hairline where a section follows another one. */
+  contiguous?: boolean;
+  class?: string;
+  /** Adds a subtle top-to-bottom tint so sections separate without borders. */
+  tint?: boolean;
+  labelledBy?: string;
+}
+
+const { id, contiguous = false, class: className = '', tint = false, labelledBy } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledBy}
+  class:list={[
+    'relative section-y',
+    !contiguous && 'border-t border-line',
+    tint && 'bg-ink-900/40',
+    className,
+  ]}
+>
+  <slot />
+</section>

@@ -1,0 +1,66 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Aurora from '~/components/ui/Aurora.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import { getDictionary, type Locale } from '~/i18n';
+
+/**
+ * The no-JS fallback target for the Bangla request form. The enhanced path
+ * replaces the form with an inline success panel instead of navigating, so
+ * most visitors never see this page — but it must exist or their submission
+ * 404s, which would be a silently lost lead.
+ */
+const locale = (Astro.currentLocale ?? 'bd') as Locale;
+const dict = getDictionary(locale);
+const form = dict.form;
+const privacyHref = '/bd/privacy/';
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${form.successTitle} — ${dict.meta.siteName}`}
+  description={form.successBody}
+  pathname="/bd/thanks/"
+  noindex
+>
+  <section class="relative overflow-hidden">
+    <Aurora position="top" grain />
+
+    <div class="shell relative py-24 lg:py-32">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-brand-400/50 bg-brand-400/12 text-brand-200">
+          <Icon name="check" size={30} />
+        </span>
+
+        <h1 class="mt-8 text-h2 font-semibold text-fg">{form.successTitle}</h1>
+        <p class="mx-auto mt-5 max-w-xl text-lead text-fg-muted">{form.successBody}</p>
+
+        <div class="mt-10 rounded-[var(--radius-card)] border border-line bg-ink-900/60 p-7 text-left backdrop-blur-sm">
+          <p class="font-mono text-[0.6875rem] tracking-[0.16em] text-fg-faint uppercase">
+            {form.successMeta}
+          </p>
+          <ol class="mt-5 space-y-4">
+            {form.successSteps.map((step, index) => (
+              <li class="flex items-start gap-3.5">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line-strong bg-ink-850 font-mono text-[0.6875rem] text-brand-300">
+                  {index + 1}
+                </span>
+                <span class="text-[0.9375rem] leading-relaxed text-fg-muted">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button href="/bd/" size="lg" icon="arrow-right" track="thanks_home">
+            {dict.nav.home}
+          </Button>
+          <Button href={privacyHref} size="lg" variant="secondary" icon="arrow-up-right">
+            {form.step3.consentLink}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

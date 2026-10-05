@@ -1,5 +1,47 @@
-# ScrapeVerse static site — no build step (Tailwind via CDN)
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "dist"
 
-# Contact forms are detected from data-netlify="true" in index.html & local.html
+[build.environment]
+  NODE_VERSION = "22.12.0"
+
+# Contact form is declared in RequestWizard.astro with data-netlify="true".
+# Netlify detects it at build time and rewrites the POST to its form handler.
+# AJAX submission goes to the localized thanks page; without JS the browser
+# performs a normal POST and Netlify redirects to the same page.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # HTML must revalidate so a deploy is picked up immediately; hashed build
+    # assets below are safe to cache forever.
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Astro writes content-hashed files to /_assets (see build.assets in
+# astro.config.mjs). Caching /_astro/* would never match anything.
+[[headers]]
+  for = "/_assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/thanks/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/thank-you-bn"
+  to = "/bd/thanks/"
+  status = 301
+  force = true

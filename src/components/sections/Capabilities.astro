@@ -1,0 +1,48 @@
+---
+import Section from '~/components/ui/Section.astro';
+import SectionHeader from '~/components/ui/SectionHeader.astro';
+import Icon from '~/components/ui/Icon.astro';
+import type { IconName } from '~/components/ui/Icon.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<Section id="capabilities" labelledBy="capabilities-heading">
+  <div class="shell">
+    <SectionHeader
+      id="capabilities-heading"
+      eyebrow={dict.capabilities.eyebrow}
+      title={dict.capabilities.title}
+      lead={dict.capabilities.lead}
+    />
+
+    <div class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3">
+      {dict.capabilities.items.map((item, index) => (
+        <article
+          class="edge-lit group relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-ink-900/50 p-7 backdrop-blur-sm transition-[transform,border-color,background-color] duration-400 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:border-brand-500/35 hover:bg-ink-850/70"
+          data-reveal
+          style={`--reveal-delay:${(index % 3) * 80}ms`}
+        >
+          <div
+            class="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand-400/0 blur-3xl transition-colors duration-500 group-hover:bg-brand-400/12"
+            aria-hidden="true"
+          />
+
+          <div class="relative flex h-12 w-12 items-center justify-center rounded-xl border border-line-strong bg-ink-800 text-brand-300 transition-[color,border-color,background-color,box-shadow] duration-400 group-hover:border-brand-400/60 group-hover:bg-brand-400/12 group-hover:text-brand-200 group-hover:shadow-[0_8px_30px_-8px_rgb(18_184_214/0.5)]">
+            <Icon name={item.icon as IconName} size={22} />
+          </div>
+
+          <h3 class="relative mt-6 text-h3 font-semibold text-fg transition-colors duration-300 group-hover:text-brand-200">
+            {item.title}
+          </h3>
+          <p class="relative mt-3 text-[0.9375rem] leading-relaxed text-fg-subtle">{item.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</Section>

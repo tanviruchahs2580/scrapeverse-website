@@ -1,0 +1,20 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import LandingPage from '~/layouts/LandingPage.astro';
+import { getDictionary, type Locale } from '~/i18n';
+
+// `i18n.routing.prefixDefaultLocale: false` means Astro expects localized
+// folders on disk: src/pages/index.astro (en) and src/pages/bd/index.astro (bd).
+// Both delegate to the same layout so the two locales cannot drift apart.
+const locale = (Astro.currentLocale ?? 'bd') as Locale;
+const dict = getDictionary(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.meta.tagline}
+  description={dict.meta.defaultDescription}
+  pathname="/bd/"
+>
+  <LandingPage dict={dict} locale={locale} />
+</BaseLayout>

@@ -1,0 +1,42 @@
+---
+/**
+ * Animated background: aurora blobs + a masked grid + film grain.
+ * Pure CSS. No requestAnimationFrame, no canvas, no library — it costs
+ * nothing on the main thread and degrades to a static gradient.
+ */
+
+interface Props {
+  /** Vertical placement of the blob cluster. */
+  position?: 'top' | 'center' | 'bottom';
+  intensity?: 'subtle' | 'normal';
+  grid?: boolean;
+  grain?: boolean;
+  class?: string;
+}
+
+const {
+  position = 'top',
+  intensity = 'normal',
+  grid = true,
+  grain = false,
+  class: className = '',
+} = Astro.props;
+
+const placement: Record<NonNullable<Props['position']>, string> = {
+  top: 'top-0 h-[46rem]',
+  center: 'inset-0',
+  bottom: 'bottom-0 h-[38rem]',
+};
+---
+
+<div
+  class:list={['pointer-events-none absolute inset-0 overflow-hidden', grain && 'grain', className]}
+  aria-hidden="true"
+>
+  <div class:list={['absolute inset-x-0', placement[position]]}>
+    <div class:list={['aurora-blob aurora-blob--a', intensity === 'subtle' && 'opacity-25']}></div>
+    <div class:list={['aurora-blob aurora-blob--b', intensity === 'subtle' && 'opacity-20']}></div>
+  </div>
+
+  {grid && <div class="grid-field"></div>}
+</div>

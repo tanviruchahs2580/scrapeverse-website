@@ -1,0 +1,19 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import LegalPage from '~/layouts/LegalPage.astro';
+import { LEGAL_DOCS, type LegalDoc } from '~/content/legal';
+
+export function getStaticPaths() {
+  return (Object.keys(LEGAL_DOCS.en) as LegalDoc['slug'][]).map((slug) => ({
+    params: { doc: slug },
+  }));
+}
+
+const locale = 'en' as const;
+const slug = Astro.params.doc as LegalDoc['slug'];
+const doc = LEGAL_DOCS.en[slug];
+---
+
+<BaseLayout locale={locale} title={doc.title} description={doc.description} pathname={`/${slug}/`}>
+  <LegalPage doc={doc} locale={locale} />
+</BaseLayout>

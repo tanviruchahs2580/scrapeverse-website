@@ -1,0 +1,50 @@
+---
+import Aurora from '~/components/ui/Aurora.astro';
+import Button from '~/components/ui/Button.astro';
+import Icon from '~/components/ui/Icon.astro';
+import type { Dictionary } from '~/i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const email = 'hello@scrapeverse.com';
+const mailto = `mailto:${email}?subject=${encodeURIComponent(dict.finalCta.title)}`;
+---
+
+<section id="get-started" aria-labelledby="final-cta-heading" class="relative overflow-hidden">
+  <Aurora position="bottom" grain />
+
+  <div class="shell relative py-24 lg:py-32">
+    <div class="mx-auto max-w-3xl text-center" data-reveal>
+      <p class="eyebrow inline-flex items-center gap-2 rounded-full border border-line-strong bg-ink-900/70 px-3.5 py-1.5 backdrop-blur-sm">
+        {dict.finalCta.eyebrow}
+      </p>
+
+      <h2 id="final-cta-heading" class="mt-7 text-display font-semibold text-fg">
+        {dict.finalCta.title}
+      </h2>
+
+      <p class="mx-auto mt-7 max-w-2xl text-lead text-fg-muted">{dict.finalCta.lead}</p>
+
+      <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <Button href="#request" size="lg" track="final_primary">
+          {dict.finalCta.primaryCta}
+        </Button>
+        <Button href={mailto} size="lg" variant="secondary" icon="mail" track="final_secondary">
+          {dict.finalCta.secondaryCta}
+        </Button>
+      </div>
+
+      <p
+        class="mt-7 inline-flex items-center gap-2 text-sm text-fg-faint"
+        data-reveal
+        style="--reveal-delay:120ms"
+      >
+        <Icon name="check" size={15} class="text-brand-400" />
+        {dict.finalCta.note}
+      </p>
+    </div>
+  </div>
+</section>
